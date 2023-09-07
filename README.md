@@ -1,10 +1,10 @@
-# SpringBoot 项目初始模板
+# API开放平台
+一个提供 API 接口供开发者调用的平台。
+管理员可以接入并发布接口，统计分析各接口调用情况；用户可以注册登录并开通接口调用权限，然后可以浏览接口及在线调试，还能使用客户端 SDK 轻松在代码中调用接口。
 
-Java SpringBoot 项目初始模板，整合了常用框架和示例代码，大家可以在此基础上快速开发自己的项目。
+## 功能
 
-## 模板功能
-
-- Spring Boot 2.7.0（贼新）
+- Spring Boot 2.7.0
 - Spring MVC
 - MySQL 驱动
 - MyBatis
@@ -23,4 +23,4 @@ Java SpringBoot 项目初始模板，整合了常用框架和示例代码，大�
 - 示例单元测试类
 - 示例 SQL（用户表）
 
-访问 localhost:7529/api/doc.html 就能在线调试接口了，不需要前端配合啦~
+访问 localhost:9090/api/doc.html 就能在线调试接口了
