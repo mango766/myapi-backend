@@ -2,16 +2,19 @@ package com.yupi.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.myapi.myapiclientsdk.client.MyApiClient;
 import com.yupi.project.annotation.AuthCheck;
 import com.yupi.project.common.*;
 import com.yupi.project.constant.CommonConstant;
 import com.yupi.project.exception.BusinessException;
 import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.yupi.project.model.entity.InterfaceInfo;
 import com.yupi.project.model.entity.User;
+import com.yupi.project.model.enums.InterfaceInfoStatusEnum;
 import com.yupi.project.service.InterfaceInfoService;
 import com.yupi.project.service.UserService;
 import io.netty.util.internal.StringUtil;
@@ -24,8 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static com.yupi.project.model.enums.InterfaceInfoStatusEnum.OFFLINE;
-import static com.yupi.project.model.enums.InterfaceInfoStatusEnum.ONLINE;
+import static com.yupi.project.model.enums.InterfaceInfoStatusEnum.*;
 
 /**
  * 帖子接口
@@ -234,6 +236,8 @@ public class InterfaceInfoController {
         return ResultUtils.success(result);
     }
 
+
+
     /**
      * 下线
      *
@@ -264,6 +268,49 @@ public class InterfaceInfoController {
         interfaceInfo.setStatus(OFFLINE.getValue());
         boolean result = interfaceInfoService.updateById(interfaceInfo);
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 测试调用
+     *
+     * @param InterfaceInfoInvokeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequestRequest
+            , HttpServletRequest request) {
+
+
+        // --- 校验用户名是否存在
+        if (interfaceInfoInvokeRequestRequest == null||interfaceInfoInvokeRequestRequest.getId()<=0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        long id = interfaceInfoInvokeRequestRequest.getId();
+        String userRequestParams = interfaceInfoInvokeRequestRequest.getUserRequestParams();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if(oldInterfaceInfo.getStatus() != ONLINE.getValue()){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"接口未开启");
+        }
+
+
+//     找到当前登录用户
+        User loginUser = userService.getLoginUser(request);
+
+
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        MyApiClient tempClient = new MyApiClient(accessKey,secretKey);
+        Gson gson = new Gson();
+        com.myapi.myapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.myapi.myapiclientsdk.model.User.class);
+        String usernameByPost = tempClient.getUserNameByPost(user);
+
+
+        return ResultUtils.success(usernameByPost);
     }
     // endregion
 }

@@ -31,10 +31,13 @@ public class InterfaceInfoQueryRequest extends PageRequest implements Serializab
      */
     private String description;
 
+
+
     /**
      * 接口地址
      */
     private String url;
+
 
     /**
      * 请求头
