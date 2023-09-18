@@ -1,5 +1,6 @@
 server:
   port: 8123
+#  port: 8090
   servlet:
     context-path: /api
 myapi:

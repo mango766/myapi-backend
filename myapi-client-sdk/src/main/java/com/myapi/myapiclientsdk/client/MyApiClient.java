@@ -19,13 +19,15 @@ import cn.hutool.json.JSONUtil;
 import com.myapi.myapiclientsdk.model.User;
 
 
+import static com.myapi.myapiclientsdk.utils.SignUtils.genSign;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.myapi.myapiclientsdk.Utils.SignUtils.genSign;
+
 
 
 public class MyApiClient {
+    private final String GATEWAY_HOST = "http://localhost:9080";
 
     private String accessKey;
     private String secretKey;
@@ -39,7 +41,7 @@ public class MyApiClient {
     public String getNameByGet(String name) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("name", name);
-        String result3 = HttpUtil.get("http://localhost:8123/api/name/", paramMap);
+        String result3 = HttpUtil.get(GATEWAY_HOST+"/api/name/", paramMap);
         System.out.println(result3);
         return "Get" + result3;
     }
@@ -47,7 +49,7 @@ public class MyApiClient {
     public String getNameByPost(String name) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("name", name);
-        String result3 = HttpUtil.post("http://localhost:8123/api/name/", paramMap);
+        String result3 = HttpUtil.post(GATEWAY_HOST+"/api/name/", paramMap);
         System.out.println(result3);
         return "Post1" + result3;
     }
@@ -72,7 +74,7 @@ public class MyApiClient {
 
     public String getUserNameByPost(User user) {
         String json = JSONUtil.toJsonStr(user);
-        HttpResponse httpResponse = HttpRequest.post("http://localhost:8123/api/name/user").addHeaders(getHeaderMap(json)).body(json).execute();
+        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST+"/api/name/user").addHeaders(getHeaderMap(json)).body(json).execute();
         System.out.println(httpResponse.getStatus());
         String result = httpResponse.body();
         return "Post2" + result;

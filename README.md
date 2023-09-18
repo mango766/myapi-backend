@@ -41,3 +41,19 @@
 - 示例 SQL（用户表）
 
 访问 localhost:9090/api/doc.html 就能在线调试接口了
+
+### 开启项目顺序：
+- mysql服务
+- nacos
+- backend
+- gateway
+- interface
+- frontend
+
+### 项目端口：
+- backend:9090
+- frontend:8080
+- gateway:9080
+- gateway转发到interface
+- interface:8123
+- nacos:8848
